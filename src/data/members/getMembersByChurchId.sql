@@ -1,0 +1,12 @@
+SELECT [Id]
+      ,[Title]
+      ,[FirstName]
+      ,[LastName]
+      ,[Gender]
+      ,[PhoneNumber]
+      ,[Email]
+      ,[DateOfBirth]
+      ,[Church]
+      ,[ChurchId]
+  FROM [BirthdayReminder].[dbo].[Members]
+  WHERE [ChurchId] = @ChurchId AND [IsDeleted] = 0

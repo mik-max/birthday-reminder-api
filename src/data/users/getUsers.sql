@@ -1,0 +1,13 @@
+SELECT [Id]
+      ,[FirstName]
+      ,[LastName]
+      ,[Gender]
+      ,[Email]
+      ,[PhoneNumber]
+      ,[Church]
+      ,[ChurchId]
+      ,[Role]
+      ,[Password]
+      ,[DateCreated]
+FROM [dbo].[Users]
+WHERE [IsDeleted] = 0
