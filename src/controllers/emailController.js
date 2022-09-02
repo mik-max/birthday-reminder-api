@@ -20,7 +20,7 @@ const sendMail = (celebrants) => {
      const receivers = celebrants.map((celebrant, index) => {
           return {email: `${celebrant.Email}`}
      })
-     celebrants.forEach((celebrant, index) => {
+     celebrants.forEach((celebrant, index) => { 
           const receivers = [
                {email: `${celebrant.Email}`}
           ]
