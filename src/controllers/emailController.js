@@ -17,9 +17,8 @@ const sendMail = (celebrants) => {
           email: 'michaelchinye2018@gmail.com'
      }
      
-     const receivers = celebrants.map((celebrant, index) => {
-          return {email: `${celebrant.Email}`}
-     })
+     
+     
      celebrants.forEach((celebrant, index) => {
           const receivers = [
                {email: `${celebrant.Email}`}
@@ -63,8 +62,9 @@ const sendEmails = async (req, res, next) => {
                     todaysCelebrants.push(member)
                }
           })
-          sendMail(todaysCelebrants);
-          res.status(200).send(todaysCelebrants)
+          todaysCelebrants !== [] && sendMail(todaysCelebrants);
+          
+          res.status(200).send({status: "ok", message: "Emails have been sent." })
      } catch (error) {
           res.status(400).send(error.message)
      }

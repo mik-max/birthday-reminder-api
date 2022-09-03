@@ -7,6 +7,7 @@ import churchesRouter from './src/routes/churchesRoutes.js';
 import membersRouter from './src/routes/membersRoutes.js';
 import usersRouter from './src/routes/usersRoutes.js';
 import emailRouter from './src/routes/emailRoutes.js';
+import smsRouter from './src/routes/smsRoutes.js';
 
 const app = express()
 const port = process.env.PORT || 8001
@@ -21,6 +22,7 @@ app.use('/api', churchesRouter)
 app.use('/api', membersRouter)
 app.use('/api', usersRouter)
 app.use('/api', emailRouter)
+app.use('/api', smsRouter)
 
 schedule.scheduleJob('00 1 00 * * *', async function() {
      // This will run every Day at 12:00;
