@@ -28,6 +28,7 @@
     "node-fetch": "^3.2.10",
     "node-schedule": "^2.1.0",
     "nodemon": "^2.0.19",
-    "sib-api-v3-sdk": "^8.4.2"
+    "sib-api-v3-sdk": "^8.4.2",
+    "swagger-ui-express": "^4.5.0"
   }
 }

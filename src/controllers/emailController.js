@@ -17,8 +17,6 @@ const sendMail = (celebrants) => {
           email: 'michaelchinye2018@gmail.com'
      }
      
-     
-     
      celebrants.forEach((celebrant, index) => {
           const receivers = [
                {email: `${celebrant.Email}`}
