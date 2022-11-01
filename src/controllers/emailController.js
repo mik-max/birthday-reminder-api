@@ -16,7 +16,9 @@ const sendMail = (celebrants) => {
           email: 'michaelchinye2018@gmail.com'
      }
      
-     celebrants.forEach((celebrant, index) => { 
+
+     celebrants.forEach((celebrant, index) => {
+
           const receivers = [
                {email: `${celebrant.Email}`}
           ]
@@ -287,14 +289,15 @@ const sendEmails = async (req, res, next) => {
           //      let formartedCurrentDate = formartDate(currentMonth, currentDate)
 
           //      let result = checkMatchingDates(formartedBirthDate, formartedCurrentDate)
-
-          //      if(result){
-          //           todaysCelebrants.push(member)
-          //      }
-          // })
-          // sendMail(todaysCelebrants);
+          //  if(result){
+          //      todaysCelebrants.push(member)
+          // }
           sendToIndividual('Emeka', 'emekachinye09@gmail.com');
-          res.status(200).send({status: 'ok', message: 'successfuly sent'})
+
+          // todaysCelebrants !== [] && sendMail(todaysCelebrants);
+          
+          res.status(200).send({status: "ok", message: "Emails have been sent." })
+
      } catch (error) {
           res.status(400).send(error.message)
      }

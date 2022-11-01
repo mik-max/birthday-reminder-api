@@ -8,6 +8,7 @@ import churchesRouter from './src/routes/churchesRoutes.js';
 import membersRouter from './src/routes/membersRoutes.js';
 import usersRouter from './src/routes/usersRoutes.js';
 import emailRouter from './src/routes/emailRoutes.js';
+import smsRouter from './src/routes/smsRoutes.js';
 
 const app = express()
 const port = process.env.PORT || 8001
@@ -18,6 +19,7 @@ app.use(Cors());
 
 //Endpoints
 app.get('/', (req, res) => res.status(200).send('Hello CleverProgrammers!!!!!. CELZ4 API!!!🔥🔥'))
+
 app.use('/api/v1', churchesRouter)
 app.use('/api/v1', membersRouter)
 app.use('/api/v1', usersRouter)
