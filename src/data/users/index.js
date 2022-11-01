@@ -2,9 +2,9 @@ import loadSqlQueries from "../../../utils.js";
 import configData from "../../../config.js";
 import { encrypt, compareHash } from "../../utilities/hashing.js";
 import sql from 'mssql';
-let pool = await sql.connect(configData.sql);
 let sqlQueries = await loadSqlQueries('data/users');
 let generalSqlQueries = await loadSqlQueries('data/general')
+;
 
 const createUserData = async (userData) => {
      const hashedPassword = encrypt(userData.password);
@@ -34,17 +34,21 @@ const createUserData = async (userData) => {
 
 const getUsersData = async () => {
      try {
+          let pool = await sql.connect(configData.sql); // opened database conection
           const list = await pool.request().query(sqlQueries.getUsers)
+          await pool.close(); // closed database connection
           return list.recordset;
+          
      } catch (error) {
           return error.message
      }
 }
 const getUserDataById = async (Id) => {
      try {
+          let pool = await sql.connect(configData.sql); // opened database conection
           const list = await pool.request().input('Id', sql.Int, Id).query(sqlQueries.getUserById)
+          await pool.close();  // closed database connection
           return list.recordset;
-          
      } catch (error) {
           return error.message
      }
@@ -54,6 +58,7 @@ const updateUserData = async (Id, userData) => {
      let date = new Date(); 
      let isoDateTime = new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString();
      try {
+          let pool = await sql.connect(configData.sql); // opened database connection
           const churchId = await pool.request().input('Name', sql.VarChar(50), userData.church).query(generalSqlQueries.getChurchId)
           console.log(churchId.recordset[0].Id)
           const insertUser = await pool.request()
@@ -65,9 +70,10 @@ const updateUserData = async (Id, userData) => {
           .input('PhoneNumber', sql.VarChar(20), userData.phoneNumber)
           .input('Church', sql.VarChar(50), userData.church)
           .input('ChurchId', sql.Int, churchId.recordset[0].Id) 
-          .input('Role', sql.VarChar(20), userData.Role)
+          .input('Role', sql.VarChar(20), userData.role)
           .input('DateModified', sql.DateTime2, isoDateTime)
           .query(sqlQueries.updateUser)
+          await pool.close(); //closed database connection
           return insertUser.recordset;
      } catch (error) {
           return error.message
@@ -78,10 +84,12 @@ const deleteUserData = async (Id) => {
      let date = new Date(); 
      let isoDateTime = new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString();
      try {
+          let pool = await sql.connect(configData.sql); // opened database connection
           const deleteUser = await pool.request()
           .input('Id', sql.Int, Id)
           .input('DateModified', sql.DateTime2, isoDateTime)
-          .query(sqlQueries.deleteUser)
+          .query(sqlQueries.deleteUser) 
+          await pool.close(); // closed database connection
           return deleteUser.recordset;
      } catch (error) {
           return error.message
@@ -91,9 +99,11 @@ const deleteUserData = async (Id) => {
 const getUserSignInCredentials = async (userEmail) => {
 
      try {
+          let pool = await sql.connect(configData.sql); //opened database connection
           let user = await pool.request()
           .input('Email', sql.VarChar(50), userEmail)
           .query(sqlQueries.getUserByEmail)
+          await pool.close();  //closed database connection
           return user.recordset;
      } catch (error) {
           return error.message;
