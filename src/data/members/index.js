@@ -72,6 +72,7 @@ const updateMembersData = async(Id, membersData) => {
           .input('DateModified', sql.DateTime2, isoDateTime).query(sqlQueries.updateMembers)
 
           return list.recordset
+
      } catch (error) {
           return error.message
      }
