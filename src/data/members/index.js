@@ -1,20 +1,16 @@
 import loadSqlQueries from "../../../utils.js";
 import configData from "../../../config.js";
 import sql from 'mssql';
-let pool = await sql.connect(configData.sql);
 let sqlQueries = await loadSqlQueries('data/members');
 let generalSqlQueries = await loadSqlQueries('data/general')
 
 const createMemberData = async (memberData) => {
      let date = new Date(); 
      let isoDateTime = new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString();
-     console.log(date)
      try {
+          let pool = await sql.connect(configData.sql) // opened databse connection
           const churchId = await pool.request().input('Name', sql.VarChar(50), memberData.church).query(generalSqlQueries.getChurchId)
           console.log(churchId.recordset[0].Id)
-
-
-
 
           const insertMember = await pool.request()
           .input('Title', sql.VarChar(20), memberData.title)
@@ -28,6 +24,7 @@ const createMemberData = async (memberData) => {
           .input('ChurchId', sql.Int, churchId.recordset[0].Id) 
           .input('DateCreated', sql.DateTime2, isoDateTime)
           .query(sqlQueries.createMembers)
+          await pool.close() // closed database conection
           return insertMember.recordset;
      } catch (error) {
           return error.message;
@@ -36,7 +33,9 @@ const createMemberData = async (memberData) => {
 
 const getMembersData = async () => {
      try {
+          let pool = await sql.connect(configData.sql) // opened databse connection
           const list = await pool.request().query(sqlQueries.getMembers);
+          await pool.close() // closed database conection
           return list.recordset;
      } catch (error) {
           return error.message
@@ -45,7 +44,9 @@ const getMembersData = async () => {
 
 const getMembersDataByChurchId = async (ChurchId) => {
      try {
+          let pool = await sql.connect(configData.sql) // opened databse connection
           const list = await pool.request().input('ChurchId', sql.Int, ChurchId).query(sqlQueries.getMembersByChurchId)
+          await pool.close() // closed database conection
           return list.recordset;
      } catch (error) {
           return error.message
@@ -56,6 +57,7 @@ const updateMembersData = async(Id, membersData) => {
      let date = new Date(); 
      let isoDateTime = new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString();
      try {
+          let pool = await sql.connect(configData.sql) // opened databse connection
           const churchId = await pool.request().input('Name', sql.VarChar(50), membersData.church).query(generalSqlQueries.getChurchId)
 
          const list = await pool.request()
@@ -70,7 +72,7 @@ const updateMembersData = async(Id, membersData) => {
           .input('Church', sql.VarChar(50), membersData.church)
           .input('ChurchId', sql.Int, churchId.recordset[0].Id)
           .input('DateModified', sql.DateTime2, isoDateTime).query(sqlQueries.updateMembers)
-
+          await pool.close() // closed database conection
           return list.recordset
 
      } catch (error) {
@@ -83,10 +85,11 @@ const deleteMemberData = async(Id) => {
      let isoDateTime = new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString();
 
      try {
+          let pool = await sql.connect(configData.sql) // opened databse connection
           const list = await pool.request()
           .input('Id', sql.Int, Id )
           .input('DateModified', sql.DateTime2, isoDateTime).query(sqlQueries.deleteMembers)
-
+          await pool.close() // closed database conection
           return list.recordset
      } catch (error) {
           return error.message

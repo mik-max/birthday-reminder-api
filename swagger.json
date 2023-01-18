@@ -1,34 +1,104 @@
 {
      "openapi": "3.0.0",
      "info": {
-         "title": "Sample API",
+         "title": "birthday reminder ",
          "description": "Optional multiline or single-line description in [CommonMark](http://commonmark.org/help/) or HTML.",
          "version": "0.1.9"
      },
      "servers": [
+         
          {
-             "url": "http://localhost:8001/api",
-             "description": "Internal staging server for testing"
+             "url": "https://dc58-102-89-23-206.eu.ngrok.io",
+             "description": "Live Demo server, e.g. Internal staging server for testing"
          },
          {
-             "url": "http://staging-api.example.com",
-             "description": "Optional server description, e.g. Internal staging server for testing"
-         }
+               "url": "http://localhost:8001",
+               "description": "Internal staging server for testing"
+          }
      ],
+     
      "paths": {
-         "/churches": {
+         "/api/v1/churches": {
              "get": {
                  "summary": "Returns a list of Churches in the group.",
+                 "tags": [
+                    "churches"
+                 ],
                  "description":"A get request that returns a list of churches",
+                 "parameters": [
+                    {
+                        "in": "query",
+                        "name": "page",
+                        "schema": {
+                            "type":"integer"
+                        },
+                        "required": false,
+                        "description": "Page number"
+                    },
+                    {
+                         "in": "query",
+                         "name": "limit",
+                         "schema": {
+                             "type":"integer"
+                         },
+                         "required": false,
+                         "description": "Amount of record per page"
+                     }
+                ],
                  "responses": {
                      "200": {
                          "description": "A JSON array of churches",
                          "content": {
                              "application/json": {
                                  "schema": {
-                                     "type": "array",
-                                     "items": {
-                                         "type": "string"
+                                     "type": "object",
+                                     "properties": {
+                                         
+                                         "results": {
+                                             "type": "array",
+                                             "items":{
+                                                  "type": "object",
+                                                  "properties":{
+                                                       "Id": {
+                                                            "type": "integer"
+                                                        },
+                                                        "Name": {
+                                                            "type":"string"
+          
+                                                        },
+                                                        "GroupId":{
+                                                            "type":"integer"
+                                                        }
+                                                  }
+                                             }
+                                         },
+                                         "next":{
+                                             "type":"object",
+                                             "properties":{
+                                                  "page": {
+                                                       "type": "integer"
+                                                   },
+                                                   "limit": {
+                                                       "type":"integer"
+     
+                                                   },
+                                                   "pages":{
+                                                       "type":"integer"
+                                                   }
+                                             }
+                                         },
+                                         "previous":{
+                                             "type":"object",
+                                             "properties":{
+                                                  "page": {
+                                                       "type": "integer"
+                                                   },
+                                                   "limit": {
+                                                       "type":"integer"
+     
+                                                   }
+                                             }
+                                         }
                                      }
                                  }
                              }
@@ -37,14 +107,17 @@
                  }
              }
          },
-         "/churches/{GroupId}": {
+         "/api/v1/churches/{groupId}": {
                "get": {
                     "summary": "Returns a list of Churches in the group.",
+                    "tags": [
+                         "churches"
+                      ],
                     "description":"A get request that returns a list of churches",
                     "parameters": [
                          {
                              "in": "path",
-                             "name": "GroupId",
+                             "name": "groupId",
                              "schema": {
                                  "type":"integer"
                              },
@@ -60,8 +133,21 @@
                                         "schema": {
                                              "type": "array",
                                              "items": {
-                                             "type": "string"
-                                             }
+                                                  "type": "object",
+                                                  "properties": {
+                                                      "Id": {
+                                                           "type": "integer"
+                                                       },
+                                                       "Name": {
+                                                           "type":"string"
+         
+                                                       },
+                                                       "GroupId":{
+                                                           "type":"integer"
+                                                       }
+                                                      
+                                                  }
+                                              }
                                         }
                                    }
                               }
@@ -69,14 +155,62 @@
                     }
                }
          },
-          "/create/members": {
+         "/api/v1/church/{churchId}": {
+          "get": {
+               "summary": "Returns the detailed information of a Church.",
+               "tags": [
+                    "churches"
+                 ],
+               "description":"A get request that returns the detailed information of a Church",
+               "parameters": [
+                    {
+                        "in": "path",
+                        "name": "churchId",
+                        "schema": {
+                            "type":"integer"
+                        },
+                        "required": true,
+                        "description": "Chruch's  id"
+                    }
+                ],
+               "responses": {
+                    "200": {
+                         "description": "Church data",
+                         "content": {
+                              "application/json": {
+                                   "schema": {
+                                        "type": "object",
+                                        "properties": {
+                                            "Id": {
+                                                 "type": "integer"
+                                             },
+                                             "Name": {
+                                                 "type":"string"
+
+                                             },
+                                             "GroupId":{
+                                                 "type":"integer"
+                                             }
+                                            
+                                        }
+                                   }
+                              }
+                         }
+                    }
+               }
+          }
+    },
+          "/api/v1/create/members": {
                "post": {
                     "summary": "Create a new member In a church",
+                    "tags": [
+                         "members"
+                      ],
                     "description":"Creates a new unique member in a church",
                     "requestBody": {
                          "required": true,
                          "content": {
-                             "application/x-www-form-urlencoded": {
+                             "application/json": {
                                  "schema": {
                                      "type": "object",
                                      "properties": {
@@ -102,7 +236,8 @@
                                              "type": "string"
                                          },
                                          "church": {
-                                             "type": "string"
+                                             "type": "string",
+                                             "example": "Christ Embassy AIT Road"
                                          }
                                      },
                                      "required": [
@@ -127,7 +262,35 @@
                                         "schema": {
                                              "type": "array",
                                              "items": {
-                                             "type": "string"
+                                              "type": "object",
+                                              "properties": {
+                                                  "Title": {
+                                                      "type": "string"
+                                                  },
+                                                  "FirstName": {
+                                                      "type": "string"
+                                                  },
+                                                  "LastName": {
+                                                      "type": "string"
+                                                  },
+                                                  "Gender": {
+                                                      "type": "string"
+                                                  },
+                                                  "PhoneNumber": {
+                                                      "type": "string"
+                                                  },
+                                                  "Email": {
+                                                      "type": "string"
+                                                  },
+                                                  "DateOfBirth": {
+                                                      "type": "string"
+                                                  },
+                                                  "Church": {
+                                                      "type": "string",
+                                                      "example": "Christ Embassy AIT Road"
+                                                  }
+                                              }
+                                             
                                              }
                                         }
                                    }
@@ -136,9 +299,12 @@
                     }
                }
           },
-          "/members": {
+          "/api/v1/members": {
                "get": {
-                   "summary": "Returns a list of members in the group.",
+                   "summary": "Returns a list of members .",
+                   "tags": [
+                         "members"
+                    ],
                    "description":"A get request that returns a list of members",
                    "responses": {
                        "200": {
@@ -146,10 +312,38 @@
                            "content": {
                                "application/json": {
                                    "schema": {
-                                       "type": "array",
-                                       "items": {
-                                           "type": "string"
-                                       }
+                                        "type": "array",
+                                        "items": {
+                                         "type": "object",
+                                         "properties": {
+                                             "Title": {
+                                                 "type": "string"
+                                             },
+                                             "FirstName": {
+                                                 "type": "string"
+                                             },
+                                             "LastName": {
+                                                 "type": "string"
+                                             },
+                                             "Gender": {
+                                                 "type": "string"
+                                             },
+                                             "PhoneNumber": {
+                                                 "type": "string"
+                                             },
+                                             "Email": {
+                                                 "type": "string"
+                                             },
+                                             "DateOfBirth": {
+                                                 "type": "string"
+                                             },
+                                             "Church": {
+                                                 "type": "string",
+                                                 "example": "Christ Embassy AIT Road"
+                                             }
+                                         }
+                                        
+                                        }
                                    }
                                }
                            }
@@ -157,9 +351,12 @@
                    }
                }
           },
-          "/members/{churchId}": {
+          "/api/v1/members/{churchId}": {
                "get": {
                     "summary": "Returns a list of Members in a particular church.",
+                    "tags": [
+                         "members"
+                    ],
                     "description":"A get request that returns a list of members in a church",
                     "parameters": [
                          {
@@ -189,10 +386,13 @@
                     }
                }
          },
-          "/update/members/{memberId}": {
+          "/api/v1/update/members/{memberId}": {
                "put": {
                     "summary": "Updates record of an existing member",
-                    "description":"Creates a new unique member in a church",
+                    "tags": [
+                         "members"
+                    ],
+                    "description":"Updates record of an existing member in a church",
                     "parameters": [
                          {
                              "in": "path",
@@ -207,7 +407,7 @@
                     "requestBody": {
                          "required": true,
                          "content": {
-                         "application/x-www-form-urlencoded": {
+                         "application/json": {
                               "schema": {
                                    "type": "object",
                                    "properties": {
@@ -268,10 +468,14 @@
                     }
                }
           },
-          "/delete/members/{memberId}": {
-               "put": {
-                    "summary": "Sets a seleceted member record to deleted",
-                    "description":"Sets a seleceted member record to deleted",
+          "/api/v1/delete/members/{memberId}": {
+               
+               "delete": {
+                    "summary": "deletes member's record ",
+                    "tags": [
+                         "members"
+                    ],
+                    "description":"Deletes record of a member",
                     "parameters": [
                          {
                              "in": "path",
@@ -286,7 +490,7 @@
                     
                     "responses": {
                          "201": {
-                              "description": "A JSON array of member deleted",
+                              "description": "Returns Deleted member",
                               "content": {
                                    "application/json": {
                                         "schema": {
@@ -301,50 +505,58 @@
                     }
                }
           },
-          "/create/users": {
+          "/api/v1/create/users": {
                "post": {
                     "summary": "Create a new Admin user ",
-                    "description":"Create a new Admin user",
+                    "tags": [
+                         "users"
+                      ],
+                    "description":"Create a new Admin user. All fields must be completely filled and the password must be at least eight(8) characters long and must contain the following at the very least: one(1) Uppercase character, one(1) lowercase character and one(1) number between[0-9] ",
                     "requestBody": {
                          "required": true,
                          "content": {
-                             "application/x-www-form-urlencoded": {
-                                 "schema": {
-                                     "type": "object",
-                                     "properties": {
-                                        
-                                         "firstName": {
-                                             "type": "string"
-                                         },
-                                         "lastName": {
-                                             "type": "string"
-                                         },
-                                         "gender": {
-                                             "type": "string"
-                                         },
-                                         "email": {
-                                             "type": "string"
-                                         },
-                                         "phoneNumber": {
-                                             "type": "string"
-                                         },
-                                         "church": {
-                                             "type": "string"
-                                         },
-                                         "role": {
-                                             "type": "string"
-                                         }
-                                     },
-                                     "required": [                                         
-                                         "firstName",
-                                         "lastName",
-                                         "gender",
-                                         "email",
-                                         "phoneNumber",
-                                         "church",
-                                         "role"
-                                     ]
-                                 }
+                             "application/json": {
+                              "schema": {
+                                   "type": "object",
+                                   "properties": {
+                                      
+                                       "firstName": {
+                                           "type": "string"
+                                       },
+                                       "lastName": {
+                                           "type": "string"
+                                       },
+                                       "gender": {
+                                           "type": "string"
+                                       },
+                                       "email": {
+                                           "type": "string"
+                                       },
+                                       "phoneNumber": {
+                                           "type": "string"
+                                       },
+                                       "church": {
+                                           "type": "string"
+                                       },
+                                       "role": {
+                                           "type": "string"
+                                       },
+                                       "password": {
+                                           "type": "string"
+                                       }
+                                   },
+                                   "required": [                                         
+                                       "firstName",
+                                       "lastName",
+                                       "gender",
+                                       "email",
+                                       "phoneNumber",
+                                       "church",
+                                       "role",
+                                       "password"
+                                   ]
+                              }
+                              
                              }
                          }
                      },
@@ -355,9 +567,47 @@
                                    "application/json": {
                                         "schema": {
                                              "type": "array",
-                                             "items": {
-                                             "type": "string"
+                                             "items":{
+                                             "type": "object",
+                                             "properties": {
+                                             
+                                                  "FirstName": {
+                                                       "type": "string"
+                                                  },
+                                                  "LastName": {
+                                                       "type": "string"
+                                                  },
+                                                  "Gender": {
+                                                       "type": "string"
+                                                  },
+                                                  "Email": {
+                                                       "type": "string"
+                                                  },
+                                                  "PhoneNumber": {
+                                                       "type": "string"
+                                                  },
+                                                  "Church": {
+                                                       "type": "string"
+                                                  },
+                                                  "Role": {
+                                                       "type": "string"
+                                                  },
+                                                  "Password": {
+                                                       "type": "string"
+                                                  }
+                                                  },
+                                                  "required": [                                         
+                                                  "FirstName",
+                                                  "LastName",
+                                                  "Gender",
+                                                  "Email",
+                                                  "PhoneNumber",
+                                                  "Church",
+                                                  "Role",
+                                                  "Password"
+                                                  ]
                                              }
+                                             
                                         }
                                    }
                               }
@@ -365,9 +615,63 @@
                     }
                }
           },
-          "/users": {
+          "/api/v1/user/signin": {
+               "post": {
+                    "summary": "Allows existing users to sign in",
+                    "tags": [
+                         "users"
+                      ],
+                    "description":"Allows existing users to sign in",
+                    "requestBody": {
+                         "required": true,
+                         "content": {
+                             "application/json": {
+                                 "schema": {
+                                     "type": "object",
+                                     "properties": {
+                                         "email": {
+                                             "type": "string"
+                                         },
+                                         "password": {
+                                             "type": "string"
+                                         } 
+                                     },
+                                     "required": [                                         
+                                         "email",
+                                         "passowrd"
+                                     ]
+                                 }
+                             }
+                         }
+                     },
+                    "responses": {
+                         "201": {
+                              "description": "A JSON array of Admin created",
+                              "content": {
+                                   "application/json": {
+                                        "schema": {
+                                             "type": "object",
+                                             "properties": {
+                                                  "status": {
+                                                      "type": "string"
+                                                  },
+                                                  "token": {
+                                                      "type": "string"
+                                                  } 
+                                              }
+                                        }
+                                   }
+                              }
+                         }
+                    }
+               }
+          },
+          "/api/v1/users": {
                "get": {
                    "summary": "Returns a list of Users in the group.",
+                   "tags": [
+                         "users"
+                    ],
                    "description":"A get request that returns a list of Users",
                    "responses": {
                        "200": {
@@ -386,9 +690,12 @@
                    }
                }
           },
-          "/users/{userId}": {
+          "/api/v1/users/{userId}": {
                "get": {
                     "summary": "Returns a particular user by userId.",
+                    "tags": [
+                         "users"
+                      ],
                     "description":"A get request that returns a user",
                     "parameters": [
                          {
@@ -418,9 +725,12 @@
                     }
                }
           },
-          "/update/users/{userId}": {
+          "/api/v1/update/users/{userId}": {
                "put": {
                     "summary": "Updates record of an existing user",
+                    "tags": [
+                         "users"
+                      ],
                     "description":"Updates record of an existing user",
                     "parameters": [
                          {
@@ -436,7 +746,7 @@
                     "requestBody": {
                          "required": true,
                          "content": {
-                         "application/x-www-form-urlencoded": {
+                         "application/json": {
                               "schema": {
                                    "type": "object",
                                    "properties": {
@@ -483,21 +793,54 @@
                               "content": {
                                    "application/json": {
                                         "schema": {
-                                             "type": "array",
-                                             "items": {
-                                             "type": "string"
-                                             }
-                                        }
+                                             "type": "object",
+                                             "properties": {
+                                                
+                                                 "FirstName": {
+                                                     "type": "string"
+                                                 },
+                                                 "LastName": {
+                                                     "type": "string"
+                                                 },
+                                                 "Gender": {
+                                                     "type": "string"
+                                                 },
+                                                 "Email": {
+                                                     "type": "string"
+                                                 },
+                                                 "PhoneNumber": {
+                                                     "type": "string"
+                                                 },
+                                                 "Church": {
+                                                     "type": "string"
+                                                 },
+                                                 "Role": {
+                                                     "type": "string"
+                                                 }
+                                             },
+                                             "required": [                                         
+                                                 "FirstName",
+                                                 "LastName",
+                                                 "Gender",
+                                                 "Email",
+                                                 "PhoneNumber",
+                                                 "Church",
+                                                 "Role"
+                                             ]
+                                         }
                                    }
                               }
                          }
                     }
                }
           },
-          "/delete/users/{userId}": {
-               "put": {
-                    "summary": "Sets a seleceted user record to deleted",
-                    "description":"Sets a seleceted user record to deleted",
+          "/api/v1/delete/users/{userId}": {
+               "delete": {
+                    "summary": "Deletes a User's record",
+                    "tags": [
+                         "users"
+                      ],
+                    "description":"Deletes a User's record",
                     "parameters": [
                          {
                              "in": "path",
@@ -512,13 +855,18 @@
                     
                     "responses": {
                          "201": {
-                              "description": "A JSON array of user deleted",
+                              "description": "A JSON array of a deleted user",
                               "content": {
                                    "application/json": {
                                         "schema": {
-                                             "type": "array",
-                                             "items": {
-                                             "type": "string"
+                                             "type": "object",
+                                             "properties":{
+                                                  "status":{
+                                                       "type":"string"
+                                                  },
+                                                  "message":{
+                                                       "type":"string"
+                                                  }
                                              }
                                         }
                                    }

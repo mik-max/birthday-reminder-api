@@ -1,13 +1,30 @@
 import { createUserData, getUsersData, getUserDataById, updateUserData, deleteUserData, getUserSignInCredentials } from "../data/users/index.js";
 import jsonwebtoken from 'jsonwebtoken';
 import { compareHash } from "../utilities/hashing.js";
-
+import { pagination } from "../utilities/pagination.js";
+import { validateEmail } from "../utilities/emailValidation.js";
+import { validatePassword } from "../utilities/passwordValidation.js";
+import { validatePhoneNumber } from "../utilities/validatePhoneNumber.js";
 const jwt = jsonwebtoken;
 const createUser = async (req, res, next) => {
      try {
           const data = req.body;
-          const created = await createUserData(data);
-          res.status(201).send(created);
+          let validatedEmail = validateEmail(req.body.email)
+          let validatedPassword = validatePassword(req.body.password)
+          let validatedPhoneNumber = validatePhoneNumber(req.body.phoneNumber)
+         if((validatedEmail && validatedPassword && validatedPhoneNumber)){
+               // const created = await createUserData(data);
+               res.status(201).send({
+                    status: 201,
+                    message: "email, password or phone number is valid"
+               });
+         }else{
+               res.status(400).send({
+                    statusCode: 400,
+                    message: "Invalid Email , Phone Number or Password",
+                    data: null
+               })
+         }
      } catch (error) {
           res.status(400).send(error.message)
           console.error(error.message)
@@ -15,8 +32,9 @@ const createUser = async (req, res, next) => {
 }
 const getUsers = async (req, res, next) => {
      try {
-          const result = await getUsersData();
-          res.status(200).send(result);
+          const data = await getUsersData();
+          const results = pagination(data, req.query)
+          res.status(200).send(results);
      } catch (error) {
           res.status(400).send(error.message)
      }
@@ -35,8 +53,24 @@ const updateUser = async (req, res, next) => {
      try {
           const Id = req.params.id
           const data = req.body
-          const result = await updateUserData(Id, data);
-          res.status(200).send(result);
+          let validatedEmail = validateEmail(req.body.email)
+          let validatedPassword = validatePassword(req.body.password)
+          let validatedPhoneNumber = validatePhoneNumber(req.body.phoneNumber)
+          if((validatedEmail && validatedPassword && validatedPhoneNumber)){
+               // const created = await createUserData(data);
+               res.status(201).send({
+                    statusCode: 201,
+                    message: "Updated"
+               });
+         }else{
+               res.status(400).send({
+                    statusCode: 400,
+                    message: "Invalid Email , Phone Number or Password",
+                    data: null
+               })
+         }
+          // const result = await updateUserData(Id, data);
+          // res.status(200).send(result);
      } catch (error) {
           res.status(400).send(error.message)
      }
@@ -62,7 +96,12 @@ const signInUser = async (req, res, next) => {
           if(hashResult){
                const token = jwt.sign({
                     email: req.body.email,
-                    password: req.body.password
+                    password: req.body.password,
+                    church: result[0].Church,
+                    firstName: result[0].FirstName,
+                    lastName: result[0].LastName,
+                    role: result[0].Role,
+                    churchId: result[0].ChurchId
                }, 'mikejwt$$')
                res.send({status: 'ok', token: token})
           }else{
