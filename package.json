@@ -19,6 +19,7 @@
   "dependencies": {
     "@vonage/server-sdk": "^2.11.2",
     "bcrypt": "^5.0.1",
+    "bunyan": "^1.8.15",
     "cors": "^2.8.5",
     "dotenv": "^16.0.2",
     "exceljs": "^4.3.0",

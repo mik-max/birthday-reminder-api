@@ -74,6 +74,7 @@ const updateMembersData = async(Id, membersData) => {
           .input('DateModified', sql.DateTime2, isoDateTime).query(sqlQueries.updateMembers)
           await pool.close() // closed database conection
           return list.recordset
+
      } catch (error) {
           return error.message
      }
