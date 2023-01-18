@@ -60,7 +60,6 @@ const updateUserData = async (Id, userData) => {
      try {
           let pool = await sql.connect(configData.sql); // opened database connection
           const churchId = await pool.request().input('Name', sql.VarChar(50), userData.church).query(generalSqlQueries.getChurchId)
-          console.log(churchId.recordset[0].Id)
           const insertUser = await pool.request()
           .input('Id', sql.Int, Id)
           .input('FirstName', sql.VarChar(50), userData.firstName)
